@@ -1,7 +1,3 @@
-#include <iostream>
-
-#include "./matrix/include/led-matrix.h"
-#include "./matrix/include/graphics.h"
 // -*- mode: c++; c-basic-offset: 2; indent-tabs-mode: nil; -*-
 // Copyright (C) 2015 Henner Zeller <h.zeller@acm.org>
 //
@@ -16,6 +12,9 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://gnu.org/licenses/gpl-2.0.txt>
+
+#include "led-matrix.h"
+#include "graphics.h"
 
 #include <string>
 

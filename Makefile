@@ -1,7 +1,7 @@
 CFLAGS=-Wall -O3 -g -Wextra -Wno-unused-parameter
 CXXFLAGS=$(CFLAGS)
-OBJECTS=demo.o
-BINARIES=demo 
+OBJECTS=demo.o imageDemo.o
+BINARIES=demo imageDemo
 
 RGB_LIB_DISTRIBUTION=./matrix
 RGB_INCDIR=$(RGB_LIB_DISTRIBUTION)/include
@@ -21,6 +21,9 @@ $(RGB_LIBRARY): FORCE
 
 #Create test executable from the object file
 demo : demo.o
+
+imageDemo : imageDemo.o
+
 
 #Build the final binaries that all have the same name as the object file
 % : %.o $(RGB_LIBRARY)
