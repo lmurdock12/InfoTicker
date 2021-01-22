@@ -34,6 +34,10 @@ using namespace std;
 using namespace rgb_matrix;
 
 
+#include "Item.h"
+
+
+/*
 class Item {
 
 public:
@@ -66,6 +70,7 @@ private:
     //TODO: Implement background color
 
 };
+
 
 Item::Item(int x_cord, int y_cord, string defaultName, int letterSpacing,Font* font,
         Color color, int x_start) {
@@ -113,7 +118,7 @@ void Item::drawItem(rgb_matrix::Canvas *c, int rightBoundry) {
         }
 
     }
-
+*/
 
 
 volatile bool interrupt_received = false;
@@ -337,6 +342,7 @@ int main(int argc, char *argv[]) {
       int currInd = std::distance(currentItems.begin(),it);
 
       (*it)->drawItem(offscreen_canvas,board_size);
+      cout << (*it)->x << endl;
 
       //Check first item
       if(currInd==0 && (*it)->leftBound) {

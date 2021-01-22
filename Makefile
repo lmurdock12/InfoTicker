@@ -1,6 +1,6 @@
 CFLAGS=-Wall -O3 -g -Wextra -Wno-unused-parameter
 CXXFLAGS=$(CFLAGS)
-OBJECTS=demo.o imageDemo.o
+OBJECTS=demo.o imageDemo.o Item.o Image.o
 BINARIES=demo imageDemo
 
 RGB_LIB_DISTRIBUTION=./matrix
@@ -19,10 +19,15 @@ $(RGB_LIBRARY): FORCE
 	$(MAKE) -C $(RGB_LIBDIR)
 	#$(MAKE) -C examples-api-use
 
-#Create test executable from the object file
-demo : demo.o
+#Create test executable from the object file...
+#Why does the demo work if I include Item.0 in the actual line and not at the top...
+demo : demo.o Item.o $(RGB_LIBRARY) #TODO: Look for a better way to link in Item.0
+	$(CXX) $< -o $@ Item.o $(LDFLAGS) 
 
-imageDemo : imageDemo.o
+imageDemo : imageDemo.o Image.o $(RGB_LIBRARY)
+	$(CXX) $< -o $@ Image.o $(LDFLAGS) 
+
+
 
 
 #Build the final binaries that all have the same name as the object file
