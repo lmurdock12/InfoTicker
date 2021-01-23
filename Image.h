@@ -15,6 +15,10 @@
 
 #include <iostream> ///tmp
 
+
+#pragma once
+
+
 using std::min;
 using std::max;
 using std::cout; //tmp
@@ -38,26 +42,30 @@ private:
   Canvas *const canvas_;
 };
 
-
+//Todo: Rename imagescroller to image
 class ImageScroller : public DemoRunner {
 public:
   // Scroll image with "scroll_jumps" pixels every "scroll_ms" milliseconds.
   // If "scroll_ms" is negative, don't do any scrolling.
-  ImageScroller(RGBMatrix *m, int scroll_jumps, int scroll_ms = -30)
+    ImageScroller(RGBMatrix *m, int scroll_jumps, int scroll_ms = -30)
     : DemoRunner(m), scroll_jumps_(scroll_jumps),
-      scroll_ms_(scroll_ms),
-      horizontal_position_(0),
-      matrix_(m) {
+        scroll_ms_(scroll_ms),
+        horizontal_position_(0),
+        matrix_(m) {
     offscreen_ = matrix_->CreateFrameCanvas();
-  }
+    }
 
-  // _very_ simplified. Can only read binary P6 PPM. Expects newlines in headers
-  // Not really robust. Use at your own risk :)
-  // This allows reload of an image while things are running, e.g. you can
-  // live-update the content.
-  bool LoadPPM(const char *filename);
+    // _very_ simplified. Can only read binary P6 PPM. Expects newlines in headers
+    // Not really robust. Use at your own risk :)
+    // This allows reload of an image while things are running, e.g. you can
+    // live-update the content.
+    bool LoadPPM(const char *filename);
 
-  void Run() override;
+    void Run() override;
+
+    int getImageWidth();
+    void setPosX(int pos);
+    int getPostX();
 
 
 private:
@@ -94,6 +102,8 @@ private:
     } while (result != NULL && result[0] == '#');
     return result;
   }
+
+  int curr_length;
 
   const int scroll_jumps_;
   const int scroll_ms_;

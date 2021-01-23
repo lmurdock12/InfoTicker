@@ -37,90 +37,6 @@ using namespace rgb_matrix;
 #include "Item.h"
 
 
-/*
-class Item {
-
-public:
-
-    string name = "";
-    int x = -1;
-    int y = -1;
-    int length = -1;
-    int letterSpacing = 0;
-    int x_orig = -1;
-
-
-    bool leftBound = false;
-    bool rightBound = false;
-
-    Color currColor; //Holds the current font color
-    Font* fontPtr; //Holds the current font;
-
-    Item();
-    Item(int x, int y, string defaultName, int letterSpacing,Font* font,
-        Color color, int x_start);
-    //TODO:add background color initliazation
-    void drawItem(rgb_matrix::Canvas *c, int rightBoundry);
-
-
-
-private:
-    void setName(string newName);
-    //TODO: Update color method
-    //TODO: Implement background color
-
-};
-
-
-Item::Item(int x_cord, int y_cord, string defaultName, int letterSpacing,Font* font,
-        Color color, int x_start) {
-
-    x = x_cord;
-    x_orig = x_start;
-    y = y_cord;
-    name = defaultName;
-    letterSpacing = letterSpacing;
-    fontPtr = font;
-    currColor = color;
-
-}
-
-Item::Item() {
-    name = "default";
-}
-
-void Item::setName(string newName) {
-    name = newName;
-}
-
-void Item::drawItem(rgb_matrix::Canvas *c, int rightBoundry) {
-
-        //Todo: add outline font drawing
-
-        //cout << "Current X: " << x << " length: " << length << " end edge: " << x + length << endl;
-        length = rgb_matrix::DrawText(c,*fontPtr,x,y,currColor,
-                    NULL,name.c_str(),letterSpacing);
-
-        //currColor.r++;
-        //currColor.g--;
-        --x;
-
-
-
-        //assume speed > 0 (original if loop check)
-        //not doing any loop checking either (used if we want to loop the text a specific amount of times)
-        if(x+length<0) {
-          leftBound = true;
-          x = x_orig;
-        }
-        if(x+length < rightBoundry) {
-          rightBound = true;
-        }
-
-    }
-*/
-
-
 volatile bool interrupt_received = false;
 static void InterruptHandler(int signo) {
   interrupt_received = true;
@@ -245,6 +161,7 @@ int main(int argc, char *argv[]) {
   /*
    * Load font. This needs to be a filename with a bdf bitmap font.
    */
+  cout << bdf_font_file << endl;
   rgb_matrix::Font font;
   if (!font.LoadFont(bdf_font_file)) {
     fprintf(stderr, "Couldn't load font '%s'\n", bdf_font_file);
@@ -266,6 +183,9 @@ int main(int argc, char *argv[]) {
   if (canvas == NULL)
     return 1;
 
+
+
+  //Todo: see what this is for
   const bool all_extreme_colors = (matrix_options.brightness == 100)
     && FullSaturation(color)
     && FullSaturation(bg_color)
@@ -312,6 +232,8 @@ int main(int argc, char *argv[]) {
   readyItems.push(fifth);
   //currentItems.push_back(secondItem);
   
+  
+
 
   int length = 0;
   struct timespec next_frame = {0, 0};
@@ -341,6 +263,7 @@ int main(int argc, char *argv[]) {
 
       int currInd = std::distance(currentItems.begin(),it);
 
+      /* //remove
       (*it)->drawItem(offscreen_canvas,board_size);
       cout << (*it)->x << endl;
 
@@ -368,12 +291,13 @@ int main(int argc, char *argv[]) {
           break;
         }
       }
-
+      */ //remove
 
       it++;
 
     }
 
+    
     //check if less than or equal to last edge...if so increment lastRender
     //check if less then or equal to first edge...if so increment firstRender
     //if firstRender == last element...reset...

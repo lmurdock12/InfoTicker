@@ -46,6 +46,11 @@ bool ImageScroller::LoadPPM(const char *filename) {
     new_image_.image = new_image;
     new_image_.width = new_width;
     new_image_.height = new_height;
+
+    curr_length = new_image_.width;
+    //TODO: testing to see if this works
+
+
     return true;
 }
 
@@ -57,7 +62,7 @@ void ImageScroller::Run() {
 const int screen_height = offscreen_->height();
 const int screen_width = offscreen_->width();
     //cout << "Screen height x width: " << screen_height << " " << screen_width << endl;
-    cout << "Image height and width: " << current_image_.height << " " << current_image_.width << endl;
+    //cout << "Image height and width: " << current_image_.height << " " << current_image_.width << endl;
     //Where to store image height and width?
 
 
@@ -67,6 +72,7 @@ const int screen_width = offscreen_->width();
     if (new_image_.IsValid()) {
         current_image_.Delete();
         current_image_ = new_image_;
+        curr_length = current_image_.width;
         new_image_.Reset();
     }
     }
@@ -77,7 +83,7 @@ const int screen_width = offscreen_->width();
     //continue;
     }
 
-    cout << "horizontal position: " << horizontal_position_ % current_image_.width << endl;
+    cout << "horizontal position: " << horizontal_position_ << endl;
 
     for (int x = 0; x < screen_width; ++x) {
     for (int y = 0; y < screen_height; ++y) {
@@ -104,3 +110,20 @@ const int screen_width = offscreen_->width();
     } */
 
 }
+
+
+int ImageScroller::getImageWidth() {
+
+    return curr_length;
+
+}
+
+
+void ImageScroller::setPosX(int pos) {
+    horizontal_position_ = pos;
+}
+
+int ImageScroller::getPostX() {
+    return horizontal_position_;
+}
+

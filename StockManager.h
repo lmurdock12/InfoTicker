@@ -1,0 +1,34 @@
+#include "./matrix/include/led-matrix.h"
+#include "./matrix/include/graphics.h"
+
+#include "Item.h" //whhy cant I have these ??
+#include "Image.h"
+
+using namespace rgb_matrix;
+
+
+class StockManager {
+
+
+public:
+
+
+    //StockManager(ImageScroller* stock,Item* ticker, ImageScroller* status = nullptr,
+               // Item* price = nullptr, Item* diff = nullptr); 
+    StockManager(ImageScroller* stock,Item* ticker);
+
+    void resetLocations();
+    
+    void updateLocations(rgb_matrix::Canvas *c, int rightBoundry); //refractor arguments at some point
+
+private:
+
+
+    ImageScroller* stock = nullptr;
+    ImageScroller* status = nullptr;
+    Item* ticker = nullptr;
+    Item* price = nullptr;
+    Item* diff = nullptr;
+
+
+};

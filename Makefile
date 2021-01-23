@@ -1,7 +1,7 @@
 CFLAGS=-Wall -O3 -g -Wextra -Wno-unused-parameter
 CXXFLAGS=$(CFLAGS)
-OBJECTS=demo.o imageDemo.o Item.o Image.o
-BINARIES=demo imageDemo
+OBJECTS=demo.o imageDemo.o Item.o Image.o StockManager.o Scroller.o
+BINARIES=demo imageDemo Scroller
 
 RGB_LIB_DISTRIBUTION=./matrix
 RGB_INCDIR=$(RGB_LIB_DISTRIBUTION)/include
@@ -27,8 +27,8 @@ demo : demo.o Item.o $(RGB_LIBRARY) #TODO: Look for a better way to link in Item
 imageDemo : imageDemo.o Image.o $(RGB_LIBRARY)
 	$(CXX) $< -o $@ Image.o $(LDFLAGS) 
 
-
-
+Scroller : Scroller.o Image.o Item.o StockManager.o $(RGB_LIBRARY)
+	$(CXX) $< -o $@ Image.o Item.o StockManager.o $(LDFLAGS) 
 
 #Build the final binaries that all have the same name as the object file
 % : %.o $(RGB_LIBRARY)

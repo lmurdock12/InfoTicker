@@ -17,10 +17,32 @@
 using namespace std;
 using namespace rgb_matrix;
 
+#pragma once
 
 class Item {
 
 public:
+
+    Item();
+    Item(int x, int y, string defaultName, int letterSpacing,Font* font,
+        Color color, int x_start);
+    //TODO:add background color initliazation
+    void drawItem(rgb_matrix::Canvas *c, int rightBoundry);
+
+    void setName(string newName);
+    //TODO: Update color method
+    //TODO: Implement background color
+
+    int getWidth();
+
+    void setPosX(int pos);
+    int getPosX();
+
+    void setPosY(int pos);
+    int getPosY();
+
+private:
+
 
     string name = "";
     int x = -1;
@@ -35,17 +57,6 @@ public:
 
     Color currColor; //Holds the current font color
     Font* fontPtr; //Holds the current font;
-
-    Item();
-    Item(int x, int y, string defaultName, int letterSpacing,Font* font,
-        Color color, int x_start);
-    //TODO:add background color initliazation
-    void drawItem(rgb_matrix::Canvas *c, int rightBoundry);
-
-    void setName(string newName);
-    //TODO: Update color method
-    //TODO: Implement background color
-
 
 
 };
