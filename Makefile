@@ -21,8 +21,8 @@ $(RGB_LIBRARY): FORCE
 
 #Create test executable from the object file...
 #Why does the demo work if I include Item.0 in the actual line and not at the top...
-demo : demo.o Item.o $(RGB_LIBRARY) #TODO: Look for a better way to link in Item.0
-	$(CXX) $< -o $@ Item.o $(LDFLAGS) 
+demo : demo.o Item.o StockManager.o Image.o $(RGB_LIBRARY) #TODO: Look for a better way to link in Item.0
+	$(CXX) $< -o $@ Item.o StockManager.o Image.o $(LDFLAGS) 
 
 imageDemo : imageDemo.o Image.o $(RGB_LIBRARY)
 	$(CXX) $< -o $@ Image.o $(LDFLAGS) 

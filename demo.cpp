@@ -34,6 +34,8 @@ using namespace std;
 using namespace rgb_matrix;
 
 
+#include "StockManager.h"
+
 #include "Item.h"
 
 
@@ -190,8 +192,8 @@ int main(int argc, char *argv[]) {
     && FullSaturation(color)
     && FullSaturation(bg_color)
     && FullSaturation(outline_color);
-  if (all_extreme_colors)
-    canvas->SetPWMBits(1);
+  //if (all_extreme_colors)
+    //canvas->SetPWMBits(1); ///Disabling this also halved the refresh rate...why?
 
   signal(SIGTERM, InterruptHandler);
   signal(SIGINT, InterruptHandler);
@@ -210,7 +212,7 @@ int main(int argc, char *argv[]) {
   }
 
   int x = x_orig;
-  int y = 10;//y_orig;
+  int y = 25;//y_orig;
 
 
 
@@ -232,14 +234,19 @@ int main(int argc, char *argv[]) {
   readyItems.push(fifth);
   //currentItems.push_back(secondItem);
   
-  
+  const char* img = "ford-32-2.ppm";
+  ImageScroller *scroller = new ImageScroller(canvas,1,50,offscreen_canvas);
+  scroller->LoadPPM(img);
+
+  StockManager* mainScroller = new StockManager(scroller,secondItem);
 
 
   int length = 0;
   struct timespec next_frame = {0, 0};
 
+  mainScroller->resetLocations();
   while (!interrupt_received && loops != 0) {
-    offscreen_canvas->Fill(bg_color.r, bg_color.g, bg_color.b);
+    //offscreen_canvas->Fill(bg_color.r, bg_color.g, bg_color.b);
     
 
     //for(int i=0; i<currentItems.size();i++) {
@@ -258,14 +265,17 @@ int main(int argc, char *argv[]) {
     }*/
     
     //cout << "size: "  << currentItems.size() << "curr index: " << currInd << endl;
-    cout << " curr item size: "  << currentItems.size() << "ready item size: " << readyItems.size() << endl;
-    for(it = currentItems.begin(); it != currentItems.end();) {
+    //cout << " curr item size: "  << currentItems.size() << "ready item size: " << readyItems.size() << endl;
+    //for(it = currentItems.begin(); it != currentItems.end();) {
 
-      int currInd = std::distance(currentItems.begin(),it);
+      //int currInd = std::distance(currentItems.begin(),it);
 
-      /* //remove
-      (*it)->drawItem(offscreen_canvas,board_size);
-      cout << (*it)->x << endl;
+       //remove
+      //(*it)->drawItem(offscreen_canvas,board_size);
+      mainScroller->updateLocations(offscreen_canvas,board_size);
+      
+      
+      /*cout << (*it)->x << endl;
 
       //Check first item
       if(currInd==0 && (*it)->leftBound) {
@@ -293,9 +303,9 @@ int main(int argc, char *argv[]) {
       }
       */ //remove
 
-      it++;
+      //it++;
 
-    }
+    //}
 
     
     //check if less than or equal to last edge...if so increment lastRender

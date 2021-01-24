@@ -66,6 +66,9 @@ int main() {
 
     /*********************************************/
     //Text initialization
+
+
+
     const int board_size = matrix_options.chain_length * matrix_options.cols;
     
     RGBMatrix *canvas = RGBMatrix::CreateFromOptions(matrix_options, runtime_opt); 
@@ -79,8 +82,8 @@ int main() {
     && FullSaturation(color)
     && FullSaturation(bg_color)
     && FullSaturation(outline_color);
-  if (all_extreme_colors)
-    canvas->SetPWMBits(1);
+  //if (all_extreme_colors)
+    //canvas->SetPWMBits(1);
 
     const char* bdf_font_file = "./matrix/fonts/8x13.bdf"; //Hardcoding the font type for now
     rgb_matrix::Font font;
@@ -118,18 +121,19 @@ int main() {
 
     offscreen_canvas->Fill(bg_color.r, bg_color.g, bg_color.b);
     mainScroller->resetLocations();
-    
+
     for(int i=0; i<150;i++) {
         ///Make sure we are using one canvas for drawing both image and text?????
 
-      offscreen_canvas->Fill(bg_color.r, bg_color.g, bg_color.b); 
-      //secondItem->drawItem(offscreen_canvas,board_size);
+        offscreen_canvas->Fill(bg_color.r, bg_color.g, bg_color.b); 
+        //secondItem->drawItem(offscreen_canvas,board_size);
         mainScroller->updateLocations(offscreen_canvas,board_size);
+        //usleep(100* 1000);
 
 
-
-                // Make sure render-time delays are not influencing scroll-time
-            if (speed > 0) {
+        // Make sure render-time delays are not influencing scroll-time
+        
+        if (speed > 0) {
             if (next_frame.tv_sec == 0) {
                 // First time. Start timer, but don't wait.
                 clock_gettime(CLOCK_MONOTONIC, &next_frame);
@@ -137,12 +141,11 @@ int main() {
                 add_micros(&next_frame, delay_speed_usec);
                 clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next_frame, NULL);
             }
-            }
-            // Swap the offscreen_canvas with canvas on vsync, avoids flickering
-            offscreen_canvas = canvas->SwapOnVSync(offscreen_canvas);
-            if (speed <= 0) pause();  // Nothing to scroll.
-      //mainScroller->updateLocations(offscreen_canvas,board_size);
+        }
+
+        // Swap the offscreen_canvas with canvas on vsync, avoids flickering
+        offscreen_canvas = canvas->SwapOnVSync(offscreen_canvas);
+        if (speed <= 0) pause();  // Nothing to scroll.
+
     } 
-
-
 }

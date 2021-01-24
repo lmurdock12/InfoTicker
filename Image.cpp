@@ -56,7 +56,7 @@ bool ImageScroller::LoadPPM(const char *filename) {
 
 
 void ImageScroller::Run() {
-
+//Todo: return offscreen canvas and then pass it to the text function
 //Goal: Create a run function that only updates once everytime we call the function
 
 const int screen_height = offscreen_->height();
@@ -89,9 +89,13 @@ const int screen_width = offscreen_->width();
     for (int y = 0; y < screen_height; ++y) {
         //cout << ""
         //const Pixel &p = current_image_.getPixel((horizontal_position_ + x) % current_image_.width, y);
+        
+        //if greater then height and width keep the existing pixel color.
+        
         const Pixel &p = current_image_.getPixel((horizontal_position_ + x), y);
 
-        offscreen_->SetPixel(x, y, p.red, p.green, p.blue);
+        
+        offscreen_->SetPixel(x, y,p.red, p.green, p.blue);
     }
     }
     offscreen_ = matrix_->SwapOnVSync(offscreen_);
