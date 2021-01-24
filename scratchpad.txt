@@ -1,0 +1,36 @@
+
+
+Issue: Fixing the flicker (#1)
+
+    Currently I am working out of a couple of different demo files...One main file for the image only
+    demo, one file for the text only demo, and one file called 'scroller' that was meant for image + 
+    text. 
+
+    I created the scroller file by just copying over the specific parts I needed from the example files,
+    and I was getting some really weird flickering stuff when trying to scroll the images in the texts.
+
+    To fix back and tried to use the text demo and insert my new super class there and see if image
+    and text would work together. After messing around with some coloring issues I found that I Could
+    render the images fine if "canvas->SetPWMBits(1)" was commented out.
+        - Need to look more into why this was the case but this fixed all the coloring issues.
+
+    I do not think the best approach is to strip out all the command line arguments and stuff
+    so I am basically going to leave everything is in "demo.cpp". I will strip anything none 
+    essentially..bring that into scroller, and go from there. That should take care of the flicker
+    issue for now.
+
+    Doing images and text at the same time now works.
+
+
+    Starting to understand a little but more about how Canvas, RGBMatrix, and FrameCanvas work.
+    These essentially are all being used pretty interchangebly, and one good capability with this 
+    library is that you can fill one of the canvas before the next render and then quickly switch 
+    out canvas so it displays faster. I think you can basically use as many canvas as you want,
+    but at the end of the day they are all rendering to the same screen
+
+
+
+    Issue:
+
+    Need to be rendering to the same canvas or something....currently the text part of the image
+    gets rendered and then immediately whipped with the next render of the image

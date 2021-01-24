@@ -46,21 +46,26 @@ void StockManager::resetLocations() {
     int stockWidth = stock->getImageWidth();
     cout << "width: " << stockWidth << endl;
     //Set stock starting point
-    cout << "1." << endl;
+
     stock->setPosX(-stockWidth);
-    cout << "2." << endl;
+    cout << "1.2" << endl;
     //Set Text starting point
     //TODO: update so not static 64 (i.e use rightBoundry)
-    ticker->setPosX(64+stockWidth);
+    ticker->setPosX(64+stockWidth+30);
 
+    cout << "1.3" << endl;
 }
 
 
 void StockManager::updateLocations(rgb_matrix::Canvas *c, int rightBoundry) {
 
-    stock->Run();
-    
+    //stock->Run();
+    stock->Run(c);
+    cout << "1.4" << endl;
+
     ticker->drawItem(c,rightBoundry);
+    cout << "1.5" << endl;
+
 
 }
 
