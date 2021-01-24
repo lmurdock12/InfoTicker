@@ -55,16 +55,17 @@ bool ImageScroller::LoadPPM(const char *filename) {
 }
 
 
-void ImageScroller::Run() {
+void ImageScroller::Run(Canvas* offscreen_canvas) {
 //Todo: return offscreen canvas and then pass it to the text function
 //Goal: Create a run function that only updates once everytime we call the function
 
-const int screen_height = offscreen_->height();
-const int screen_width = offscreen_->width();
+const int screen_height = offscreen_canvas->height();
+const int screen_width = offscreen_canvas->width();
     //cout << "Screen height x width: " << screen_height << " " << screen_width << endl;
     //cout << "Image height and width: " << current_image_.height << " " << current_image_.width << endl;
     //Where to store image height and width?
 
+    cout << "2.0" << endl;
 
     //Code for updating to new image if needed
     {
@@ -95,10 +96,11 @@ const int screen_width = offscreen_->width();
         const Pixel &p = current_image_.getPixel((horizontal_position_ + x), y);
 
         
-        offscreen_->SetPixel(x, y,p.red, p.green, p.blue);
+        offscreen_canvas->SetPixel(x, y,p.red, p.green, p.blue);
     }
     }
-    offscreen_ = matrix_->SwapOnVSync(offscreen_);
+    //cout << offscreen_ << endl;
+    //offscreen_canvas = matrix_->SwapOnVSync(offscreen_);
     horizontal_position_ += scroll_jumps_;
     //if (horizontal_position_ < 0) horizontal_position_ = current_image_.width;
     

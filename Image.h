@@ -36,7 +36,7 @@ protected:
 
 public:
   virtual ~DemoRunner() {}
-  virtual void Run() = 0;
+  virtual void Run(Canvas* offscreen_canvas) = 0;
 
 private:
   Canvas *const canvas_;
@@ -47,13 +47,12 @@ class ImageScroller : public DemoRunner {
 public:
   // Scroll image with "scroll_jumps" pixels every "scroll_ms" milliseconds.
   // If "scroll_ms" is negative, don't do any scrolling.
-    ImageScroller(RGBMatrix *m, int scroll_jumps, int scroll_ms = -30, FrameCanvas* off)
+    ImageScroller(RGBMatrix *m, int scroll_jumps, int scroll_ms)
     : DemoRunner(m), scroll_jumps_(scroll_jumps),
         scroll_ms_(scroll_ms),
         horizontal_position_(0),
         matrix_(m) {
     //offscreen_ = matrix_->CreateFrameCanvas();
-      offscreen_ = off;
     }
 
     // _very_ simplified. Can only read binary P6 PPM. Expects newlines in headers
@@ -62,7 +61,7 @@ public:
     // live-update the content.
     bool LoadPPM(const char *filename);
 
-    void Run() override;
+    void Run(Canvas* offscreen_canvas) override;
 
     int getImageWidth();
     void setPosX(int pos);

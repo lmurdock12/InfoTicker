@@ -1,19 +1,67 @@
-
-
-
 #include <iostream>
 
 #include "./matrix/include/led-matrix.h"
 #include "./matrix/include/graphics.h"
 
-#include "Item.h"
-#include "Image.h"
+#include <string>
 
-#include "StockManager.h"
-
+#include <getopt.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
+#include <tuple>
+#include <iostream>
+#include <queue>
 
 using namespace std;
 using namespace rgb_matrix;
+
+
+#include "StockManager.h"
+
+#include "Item.h"
+
+
+volatile bool interrupt_received = false;
+static void InterruptHandler(int signo) {
+  interrupt_received = true;
+}
+
+static int usage(const char *progname) {
+  fprintf(stderr, "usage: %s [options] <text>\n", progname);
+  fprintf(stderr, "Takes text and scrolls it with speed -s\n");
+  fprintf(stderr, "Options:\n");
+  fprintf(stderr,
+          "\t-s <speed>        : Approximate letters per second. "
+          "(Zero for no scrolling)\n"
+          "\t-l <loop-count>   : Number of loops through the text. "
+          "-1 for endless (default)\n"
+          "\t-f <font-file>    : Path to *.bdf-font to be used.\n"
+          "\t-x <x-origin>     : Shift X-Origin of displaying text (Default: 0)\n"
+          "\t-y <y-origin>     : Shift Y-Origin of displaying text (Default: 0)\n"
+          "\t-t <track-spacing>: Spacing pixels between letters (Default: 0)\n"
+          "\n"
+          "\t-C <r,g,b>        : Text Color. Default 255,255,255 (white)\n"
+          "\t-B <r,g,b>        : Background-Color. Default 0,0,0\n"
+          "\t-O <r,g,b>        : Outline-Color, e.g. to increase contrast.\n"
+          );
+  fprintf(stderr, "\nGeneral LED matrix options:\n");
+  rgb_matrix::PrintMatrixFlags(stderr);
+  return 1;
+}
+
+static bool parseColor(Color *c, const char *str) {
+  return sscanf(str, "%hhu,%hhu,%hhu", &c->r, &c->g, &c->b) == 3;
+}
+
+static bool FullSaturation(const Color &c) {
+  return (c.r == 0 || c.r == 255)
+    && (c.g == 0 || c.g == 255)
+    && (c.b == 0 || c.b == 255);
+}
 
 static void add_micros(struct timespec *accumulator, long micros) {
   const long billion = 1000000000;
@@ -25,57 +73,101 @@ static void add_micros(struct timespec *accumulator, long micros) {
     accumulator->tv_sec += 1;
   }
 }
-static bool FullSaturation(const Color &c) {
-  return (c.r == 0 || c.r == 255)
-    && (c.g == 0 || c.g == 255)
-    && (c.b == 0 || c.b == 255);
-}
 
-int main() {
+int main(int argc, char *argv[]) {
+  RGBMatrix::Options matrix_options;
+  rgb_matrix::RuntimeOptions runtime_opt;
+  if (!rgb_matrix::ParseOptionsFromFlags(&argc, &argv,
+                                         &matrix_options, &runtime_opt)) {
+    return usage(argv[0]);
+  }
 
+  Color color(255, 255, 255);
+  Color bg_color(0, 0, 0);
+  Color outline_color(0,0,0);
+  
+  bool with_outline = false;
 
-    cout << "hello world" << endl;
+  const char *bdf_font_file = NULL;
+  std::string line;
+  const int board_size = matrix_options.chain_length * matrix_options.cols;
+  /* x_origin is set by default just right of the screen */
+  const int x_default_start = board_size + 5;
+  int x_orig = x_default_start - 6;
+  int y_orig = 0;
+  int letter_spacing = 0;
+  float speed = 7.0f;
+  int loops = -1;
 
-    RGBMatrix::Options matrix_options;
-    rgb_matrix::RuntimeOptions runtime_opt;
+  int opt;
+  while ((opt = getopt(argc, argv, "x:y:f:C:B:O:t:s:l:")) != -1) {
+    switch (opt) {
+    case 's': speed = atof(optarg); break;
+    case 'l': loops = atoi(optarg); break;
+    case 'x': x_orig = atoi(optarg); break;
+    case 'y': y_orig = atoi(optarg); break;
+    case 'f': bdf_font_file = strdup(optarg); break;
+    case 't': letter_spacing = atoi(optarg); break;
+    case 'C':
+      if (!parseColor(&color, optarg)) {
+        fprintf(stderr, "Invalid color spec: %s\n", optarg);
+        return usage(argv[0]);
+      }
+      break;
+    case 'B':
+      if (!parseColor(&bg_color, optarg)) {
+        fprintf(stderr, "Invalid background color spec: %s\n", optarg);
+        return usage(argv[0]);
+      }
+      break;
+    case 'O':
+      if (!parseColor(&outline_color, optarg)) {
+        fprintf(stderr, "Invalid outline color spec: %s\n", optarg);
+        return usage(argv[0]);
+      }
+      with_outline = true;
+      break;
+    default:
+      return usage(argv[0]);
+    }
+  }
 
-        // These are the defaults when no command-line flags are given.
-    matrix_options.rows = 32;
-    matrix_options.chain_length = 1;
-    matrix_options.parallel = 1;
-    matrix_options.hardware_mapping = "adafruit-hat";
-    matrix_options.cols = 64;
+  for (int i = optind; i < argc; ++i) {
+    line.append(argv[i]).append(" ");
+  }
 
-    //Disregarding the demo parameter for now..
-    RGBMatrix *matrix = RGBMatrix::CreateFromOptions(matrix_options, runtime_opt);
-    if (matrix == NULL)
+  if (line.empty()) {
+    fprintf(stderr, "Add the text you want to print on the command-line.\n");
+    return usage(argv[0]);
+  }
+
+  if (bdf_font_file == NULL) {
+    fprintf(stderr, "Need to specify BDF font-file with -f\n");
+    return usage(argv[0]);
+  }
+
+  /*
+   * Load font. This needs to be a filename with a bdf bitmap font.
+   */
+  cout << bdf_font_file << endl;
+  rgb_matrix::Font font;
+  if (!font.LoadFont(bdf_font_file)) {
+    fprintf(stderr, "Couldn't load font '%s'\n", bdf_font_file);
     return 1;
+  }
 
-    printf("Size: %dx%d. Hardware gpio mapping: %s\n",
-            matrix->width(), matrix->height(), matrix_options.hardware_mapping);
+  /*
+   * If we want an outline around the font, we create a new font with
+   * the original font as a template that is just an outline font.
+   */
+  rgb_matrix::Font *outline_font = NULL;
+  if (with_outline) {
+    outline_font = font.CreateOutlineFont();
+  }
 
-    
-
-
-    /*********************************************************/
-    //Image Initialization
-    const char* img = "ford-32-2.ppm";
-    ImageScroller *scroller = new ImageScroller(matrix, 1,50);
-    scroller->LoadPPM(img);
-
-
-    /*********************************************/
-    //Text initialization
-
-
-
-    const int board_size = matrix_options.chain_length * matrix_options.cols;
-    
-    RGBMatrix *canvas = RGBMatrix::CreateFromOptions(matrix_options, runtime_opt); 
-
-    Color color(255, 255, 255);
-    Color bg_color(0, 0, 0);
-    Color outline_color(0,0,0);
+  RGBMatrix *canvas = RGBMatrix::CreateFromOptions(matrix_options, runtime_opt);
+  if (canvas == NULL)
+    return 1;
 
   //Todo: see what this is for
   const bool all_extreme_colors = (matrix_options.brightness == 100)
@@ -83,22 +175,12 @@ int main() {
     && FullSaturation(bg_color)
     && FullSaturation(outline_color);
   //if (all_extreme_colors)
-    //canvas->SetPWMBits(1);
+    //canvas->SetPWMBits(1); ///Disabling this also halved the refresh rate...why?
 
-    const char* bdf_font_file = "./matrix/fonts/8x13.bdf"; //Hardcoding the font type for now
-    rgb_matrix::Font font;
-    if (!font.LoadFont(bdf_font_file)) {
-    fprintf(stderr, "Couldn't load font '%s'\n", bdf_font_file);
-    return 1;
-    } else {
-        cout << "loaded" << endl;
-    }
+  signal(SIGTERM, InterruptHandler);
+  signal(SIGINT, InterruptHandler);
 
-
-    int letter_spacing =0;
-  const int x_default_start = board_size + 5;
-  float speed = 7.0f;
-    int x_orig = x_default_start - 6;
+  printf("CTRL-C for exit.\n");
 
   // Create a new canvas to be used with led_matrix_swap_on_vsync
   FrameCanvas *offscreen_canvas = canvas->CreateFrameCanvas();
@@ -106,46 +188,74 @@ int main() {
   int delay_speed_usec = 1000000;
   if (speed > 0) {
     delay_speed_usec = 1000000 / speed / font.CharacterWidth('W');
-  } 
+  } else if (x_orig == x_default_start) {
+    // There would be no scrolling, so text would never appear. Move to front.
+    x_orig = with_outline ? 1 : 0;
+  }
+
+  int x = x_orig;
+  int y = 25;//y_orig;
+
+  Item* secondItem = new Item(x,y,"TSLA  ",letter_spacing,&font,color, x_orig);
+  Item* firstItem = new Item(x,y,"NVDIA  ",letter_spacing,&font,color,x_orig);
+  Item* third = new Item(x,y,"MRVL  ",letter_spacing,&font,color,x_orig);
+  Item* fourth = new Item(x,y,"MSFT  ",letter_spacing,&font,color,x_orig);
+  Item* fifth = new Item(x,y,"AAPL ",letter_spacing,&font,color,x_orig);
+
+  queue<Item*> readyItems;
+
+  vector<Item*> currentItems;
+  vector<Item*>::iterator it;
+
+  readyItems.push(secondItem);
+  currentItems.push_back(firstItem);
+  readyItems.push(third);
+  readyItems.push(fourth);
+  readyItems.push(fifth);
+  //currentItems.push_back(secondItem);
+  
+  const char* img = "ford-32-2.ppm";
+  ImageScroller *scroller = new ImageScroller(canvas,1,50);
+  scroller->LoadPPM(img);
+
+  StockManager* mainScroller = new StockManager(scroller,secondItem);
+
+
+  int length = 0;
   struct timespec next_frame = {0, 0};
 
+  mainScroller->resetLocations();
+  while (!interrupt_received && loops != 0) {
+    //offscreen_canvas->Fill(bg_color.r, bg_color.g, bg_color.b);
+    cout << "1" << endl;
 
-    Item* secondItem = new Item(64,10,"TSLA  ", letter_spacing, &font,color,64);
-
-    StockManager* mainScroller = new StockManager(scroller,secondItem);
-
-
-
-    /*********************************************/
-
-
-    offscreen_canvas->Fill(bg_color.r, bg_color.g, bg_color.b);
-    mainScroller->resetLocations();
-
-    for(int i=0; i<150;i++) {
-        ///Make sure we are using one canvas for drawing both image and text?????
-
-        offscreen_canvas->Fill(bg_color.r, bg_color.g, bg_color.b); 
-        //secondItem->drawItem(offscreen_canvas,board_size);
-        mainScroller->updateLocations(offscreen_canvas,board_size);
-        //usleep(100* 1000);
+    mainScroller->updateLocations(offscreen_canvas,board_size);
+    //usleep(50*1000);
+    // Make sure render-time delays are not influencing scroll-time
+    if (speed > 0) {
+      if (next_frame.tv_sec == 0) {
+        // First time. Start timer, but don't wait.
+        clock_gettime(CLOCK_MONOTONIC, &next_frame);
+      } else {
+        add_micros(&next_frame, delay_speed_usec);
+        clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next_frame, NULL);
+      }
+    }
 
 
-        // Make sure render-time delays are not influencing scroll-time
-        
-        if (speed > 0) {
-            if (next_frame.tv_sec == 0) {
-                // First time. Start timer, but don't wait.
-                clock_gettime(CLOCK_MONOTONIC, &next_frame);
-            } else {
-                add_micros(&next_frame, delay_speed_usec);
-                clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &next_frame, NULL);
-            }
-        }
+    // Swap the offscreen_canvas with canvas on vsync, avoids flickering
+    offscreen_canvas = canvas->SwapOnVSync(offscreen_canvas);
+    if (speed <= 0) pause();  // Nothing to scroll.
+  }
 
-        // Swap the offscreen_canvas with canvas on vsync, avoids flickering
-        offscreen_canvas = canvas->SwapOnVSync(offscreen_canvas);
-        if (speed <= 0) pause();  // Nothing to scroll.
 
-    } 
+
+
+
+
+  // Finished. Shut down the RGB matrix.
+  canvas->Clear();
+  delete canvas;
+
+  return 0;
 }
