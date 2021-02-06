@@ -47,11 +47,12 @@ void StockManager::resetLocations() {
     cout << "width: " << stockWidth << endl;
     //Set stock starting point
 
-    stock->setPosX(-stockWidth);
+    //stock->setPosX(-stockWidth);
+    stock->setPosX(-64);
     //Set Text starting point
     //TODO: update so not static 64 (i.e use rightBoundry)
-    ticker->setPosX(64+stockWidth+30);
-
+    //ticker->setPosX(64+stockWidth+30);
+    ticker->setPosX(64 + stockWidth + 5);//+stockWidth+10);
 }
 
 

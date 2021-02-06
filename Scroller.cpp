@@ -194,9 +194,9 @@ int main(int argc, char *argv[]) {
   }
 
   int x = x_orig;
-  int y = 25;//y_orig;
+  int y = 30;//y_orig;
 
-  Item* secondItem = new Item(x,y,"TSLA  ",letter_spacing,&font,color, x_orig);
+  Item* secondItem = new Item(x,y,"FORD  ",letter_spacing,&font,color, x_orig);
   Item* firstItem = new Item(x,y,"NVDIA  ",letter_spacing,&font,color,x_orig);
   Item* third = new Item(x,y,"MRVL  ",letter_spacing,&font,color,x_orig);
   Item* fourth = new Item(x,y,"MSFT  ",letter_spacing,&font,color,x_orig);
