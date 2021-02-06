@@ -235,7 +235,7 @@ int main(int argc, char *argv[]) {
   //currentItems.push_back(secondItem);
   
   const char* img = "ford-32-2.ppm";
-  ImageScroller *scroller = new ImageScroller(canvas,1,50,offscreen_canvas);
+  ImageScroller *scroller = new ImageScroller(canvas,1,50);
   scroller->LoadPPM(img);
 
   StockManager* mainScroller = new StockManager(scroller,secondItem);
