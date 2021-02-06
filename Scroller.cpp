@@ -85,6 +85,8 @@ int main(int argc, char *argv[]) {
   Color color(255, 255, 255);
   Color bg_color(0, 0, 0);
   Color outline_color(0,0,0);
+
+  Color negative_color(255,0,0);
   
   bool with_outline = false;
 
@@ -196,11 +198,14 @@ int main(int argc, char *argv[]) {
   int x = x_orig;
   int y = 30;//y_orig;
 
-  Item* secondItem = new Item(x,y,"FORD  ",letter_spacing,&font,color, x_orig);
+  Item* secondItem = new Item(x,15,"FORD  ",letter_spacing,&font,color, x_orig);
   Item* firstItem = new Item(x,y,"NVDIA  ",letter_spacing,&font,color,x_orig);
   Item* third = new Item(x,y,"MRVL  ",letter_spacing,&font,color,x_orig);
   Item* fourth = new Item(x,y,"MSFT  ",letter_spacing,&font,color,x_orig);
   Item* fifth = new Item(x,y,"AAPL ",letter_spacing,&font,color,x_orig);
+
+  Item* price = new Item(x,30,"11.51  ",letter_spacing,&font,negative_color,x_orig);
+
 
   queue<Item*> readyItems;
 
@@ -218,7 +223,9 @@ int main(int argc, char *argv[]) {
   ImageScroller *scroller = new ImageScroller(canvas,1,50);
   scroller->LoadPPM(img);
 
-  StockManager* mainScroller = new StockManager(scroller,secondItem);
+  
+
+  StockManager* mainScroller = new StockManager(scroller,secondItem,price);
 
 
   int length = 0;

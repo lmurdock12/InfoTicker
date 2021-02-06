@@ -33,10 +33,11 @@ s
 
 }*/
 
-StockManager::StockManager(ImageScroller* stock,Item* ticker) {
+StockManager::StockManager(ImageScroller* stock,Item* ticker,Item* price) {
 
     this->stock = stock;
     this->ticker = ticker;
+    this->price = price;
 
 }
 
@@ -53,6 +54,7 @@ void StockManager::resetLocations() {
     //TODO: update so not static 64 (i.e use rightBoundry)
     //ticker->setPosX(64+stockWidth+30);
     ticker->setPosX(64 + stockWidth + 5);//+stockWidth+10);
+    price->setPosX(64 + stockWidth + 5);
 }
 
 
@@ -61,6 +63,7 @@ void StockManager::updateLocations(rgb_matrix::Canvas *c, int rightBoundry) {
     //stock->Run();
     stock->Run(c);
     ticker->drawItem(c,rightBoundry);
+    price->drawItem(c,rightBoundry);
 }
 
 //TODO: Create a function that gets the initial values of everything and sets them to the apporpriate spot

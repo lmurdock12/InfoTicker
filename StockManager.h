@@ -15,7 +15,7 @@ public:
 
     //StockManager(ImageScroller* stock,Item* ticker, ImageScroller* status = nullptr,
                // Item* price = nullptr, Item* diff = nullptr); 
-    StockManager(ImageScroller* stock,Item* ticker);
+    StockManager(ImageScroller* stock,Item* ticker, Item* price);
 
     void resetLocations();
     
