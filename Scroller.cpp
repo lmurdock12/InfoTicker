@@ -227,8 +227,6 @@ int main(int argc, char *argv[]) {
   mainScroller->resetLocations();
   while (!interrupt_received && loops != 0) {
     //offscreen_canvas->Fill(bg_color.r, bg_color.g, bg_color.b);
-    cout << "1" << endl;
-
     mainScroller->updateLocations(offscreen_canvas,board_size);
     //usleep(50*1000);
     // Make sure render-time delays are not influencing scroll-time

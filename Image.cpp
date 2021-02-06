@@ -65,7 +65,7 @@ const int screen_width = offscreen_canvas->width();
     //cout << "Image height and width: " << current_image_.height << " " << current_image_.width << endl;
     //Where to store image height and width?
 
-    cout << "2.0" << endl;
+    //cout << "2.0" << endl;
 
     //Code for updating to new image if needed
     {

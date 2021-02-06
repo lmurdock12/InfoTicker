@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
             matrix->width(), matrix->height(), matrix_options.hardware_mapping);
 
     Canvas *canvas = matrix;
-
+    FrameCanvas *offscreen_canvas = matrix->CreateFrameCanvas();
     // The DemoRunner objects are filling
     // the matrix continuously.
     DemoRunner *demo_runner = NULL;
@@ -154,12 +154,11 @@ int main(int argc, char *argv[]) {
     printf("Press <CTRL-C> to exit and reset LEDs\n");
 
     // Now, run our particular demo; it will exit when it sees interrupt_received.
-    demo_runner->Run();
     int scroll_ms_ = 50;
 
     for(int i=0; i<100;i++) {
       usleep(scroll_ms_ * 1000);
-      demo_runner->Run();
+      demo_runner->Run(offscreen_canvas);
     }
 
     
