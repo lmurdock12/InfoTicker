@@ -232,10 +232,13 @@ int main(int argc, char *argv[]) {
   struct timespec next_frame = {0, 0};
 
   mainScroller->resetLocations();
+
   while (!interrupt_received && loops != 0) {
     //offscreen_canvas->Fill(bg_color.r, bg_color.g, bg_color.b);
     mainScroller->updateLocations(offscreen_canvas,board_size);
     //usleep(50*1000);
+
+
     // Make sure render-time delays are not influencing scroll-time
     if (speed > 0) {
       if (next_frame.tv_sec == 0) {
@@ -247,9 +250,9 @@ int main(int argc, char *argv[]) {
       }
     }
 
-
     // Swap the offscreen_canvas with canvas on vsync, avoids flickering
     offscreen_canvas = canvas->SwapOnVSync(offscreen_canvas);
+    
     if (speed <= 0) pause();  // Nothing to scroll.
   }
 

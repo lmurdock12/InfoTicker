@@ -85,7 +85,7 @@ const int screen_width = offscreen_canvas->width();
     //continue;
     }
 
-    cout << "horizontal position: " << horizontal_position_ << endl;
+    //cout << "horizontal position: " << horizontal_position_ << endl;
 
     for (int x = 0; x < screen_width; ++x) {
         for (int y = 0; y < screen_height; ++y) {

@@ -64,6 +64,14 @@ void StockManager::updateLocations(rgb_matrix::Canvas *c, int rightBoundry) {
     stock->Run(c);
     ticker->drawItem(c,rightBoundry);
     price->drawItem(c,rightBoundry);
+
+
+    cout << price->getPosEnd() << endl;
+    if (price->getPosEnd() == 0) {
+        resetLocations();
+    }
+
+
 }
 
 //TODO: Create a function that gets the initial values of everything and sets them to the apporpriate spot

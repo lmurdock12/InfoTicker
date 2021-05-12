@@ -38,6 +38,8 @@ public:
     void setPosX(int pos);
     int getPosX();
 
+    int getPosEnd();
+
     void setPosY(int pos);
     int getPosY();
 
