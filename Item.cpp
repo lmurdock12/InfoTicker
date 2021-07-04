@@ -87,6 +87,10 @@ int Item::getPosEnd() {
   return x + length;
 }
 
+int Item::getLength() {
+  return length;
+}
+
 void Item::setPosY(int pos) {
   y = pos;
 }

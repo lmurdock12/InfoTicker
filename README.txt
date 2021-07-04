@@ -12,3 +12,5 @@ sudo ./imageDemo --led-gpio-mapping="adafruit-hat" --led-cols=64 -D 1 ford-32-2.
 Copy file local to remote:
 
 scp uparrow.png pi@raspberrypi:/home/pi/InfoTicker
+
+scp Green-Up-Arrow-raw.ppm pi@<ip addr>:/home/pi/InfoTicker

@@ -198,8 +198,8 @@ int main(int argc, char *argv[]) {
   int x = x_orig;
   int y = 30;//y_orig;
 
-  Item* secondItem = new Item(x,15,"FORD  ",letter_spacing,&font,color, x_orig);
-  Item* firstItem = new Item(x,y,"NVDIA  ",letter_spacing,&font,color,x_orig);
+  Item* secondItem = new Item(x,15,"FORD",letter_spacing,&font,color, x_orig);
+  Item* firstItem = new Item(x,y,"NVDIA",letter_spacing,&font,color,x_orig);
   Item* third = new Item(x,y,"MRVL  ",letter_spacing,&font,color,x_orig);
   Item* fourth = new Item(x,y,"MSFT  ",letter_spacing,&font,color,x_orig);
   Item* fifth = new Item(x,y,"AAPL ",letter_spacing,&font,color,x_orig);
@@ -219,19 +219,33 @@ int main(int argc, char *argv[]) {
   readyItems.push(fifth);
   //currentItems.push_back(secondItem);
   
+  //Using simplified image class right now...could probably be improved in the future
+  //with the more advanced class 
   const char* img = "ford-32-2.ppm";
   ImageScroller *scroller = new ImageScroller(canvas,1,50);
   scroller->LoadPPM(img);
-
   
+  const char* arrow_img = "Green-Up-Arrow-32.ppm";
+  ImageScroller *arrow_scroller = new ImageScroller(canvas,1,50);
+  arrow_scroller->LoadPPM(arrow_img);
+  //should not need to pass in the up arrow and down arrow...should automatically load those up when
+  //initializing a new stockManager class
+  
+  
+  //WRITE IN NOTES:
+  //images must be scaled to 32 bit p6 (raw) ppm
 
-  StockManager* mainScroller = new StockManager(scroller,secondItem,price);
+  StockManager* mainScroller = new StockManager(scroller,secondItem,price,arrow_scroller);
 
 
   int length = 0;
   struct timespec next_frame = {0, 0};
 
   mainScroller->resetLocations();
+  mainScroller->updateLocations(offscreen_canvas,board_size);
+  offscreen_canvas = canvas->SwapOnVSync(offscreen_canvas);
+  mainScroller->resetLocations();
+
 
   while (!interrupt_received && loops != 0) {
     //offscreen_canvas->Fill(bg_color.r, bg_color.g, bg_color.b);

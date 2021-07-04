@@ -100,8 +100,11 @@ const int screen_width = offscreen_canvas->width();
                 cout << "---------" << endl;
                 exit(0);
             }*/
+            //cout << int(p.red) << "." << int(p.green) << "." << int(p.blue) << endl;
+            if (int(p.red) != 0 || int(p.green) != 0 || int(p.blue) != 0) {
+                offscreen_canvas->SetPixel(x, y,p.red, p.green, p.blue);
+            }
             
-            offscreen_canvas->SetPixel(x, y,p.red, p.green, p.blue);
 
         }
     }

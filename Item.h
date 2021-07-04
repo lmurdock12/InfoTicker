@@ -40,6 +40,8 @@ public:
 
     int getPosEnd();
 
+    int getLength();
+
     void setPosY(int pos);
     int getPosY();
 

@@ -33,11 +33,12 @@ s
 
 }*/
 
-StockManager::StockManager(ImageScroller* stock,Item* ticker,Item* price) {
+StockManager::StockManager(ImageScroller* stock,Item* ticker,Item* price,ImageScroller* arrow) {
 
     this->stock = stock;
     this->ticker = ticker;
     this->price = price;
+    this->arrow = arrow;
 
 }
 
@@ -48,6 +49,10 @@ void StockManager::resetLocations() {
     cout << "width: " << stockWidth << endl;
     //Set stock starting point
 
+    //TEMP:
+    //arrow->setPosX(-64);
+    //stockWidth = stock->getImageWidth();
+
     //stock->setPosX(-stockWidth);
     stock->setPosX(-64);
     //Set Text starting point
@@ -55,18 +60,38 @@ void StockManager::resetLocations() {
     //ticker->setPosX(64+stockWidth+30);
     ticker->setPosX(64 + stockWidth + 5);//+stockWidth+10);
     price->setPosX(64 + stockWidth + 5);
+
+    //arrow->setPosX(-64 + -1*(stockWidth + ticker->getPosEnd()));
+    arrow->setPosX(-1*ticker->getPosEnd()  - 10);
+
+    cout << "stock: " << stock->getPostX() << " ticker: " << price->getPosX() << ", end: " << price->getPosEnd() << endl;
+    cout << price->getLength() << endl;
+    cout << arrow->getPostX() << endl;
+
 }
 
 
 void StockManager::updateLocations(rgb_matrix::Canvas *c, int rightBoundry) {
 
-    //stock->Run();
+
+    //Reset canvas:
+    // for (int x = 0; x < c->width(); ++x) {
+    //     for (int y = 0; y < c->height(); ++y) {
+    //             c->SetPixel(x, y,0,0,0);
+    //     }
+    // }
+
+    c->Clear();
+    
     stock->Run(c);
+    arrow->Run(c);
+
+    //cout << arrow->getPostX() << endl;
     ticker->drawItem(c,rightBoundry);
     price->drawItem(c,rightBoundry);
+    //arrow->Run(c);
 
-
-    cout << price->getPosEnd() << endl;
+    //cout << price->getPosEnd() << endl;
     if (price->getPosEnd() == 0) {
         resetLocations();
     }
