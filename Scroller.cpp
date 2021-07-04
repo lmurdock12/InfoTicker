@@ -221,11 +221,11 @@ int main(int argc, char *argv[]) {
   
   //Using simplified image class right now...could probably be improved in the future
   //with the more advanced class 
-  const char* img = "ford-32-2.ppm";
+  const char* img = "./images/logos/ford-32-2.ppm";
   ImageScroller *scroller = new ImageScroller(canvas,1,50);
   scroller->LoadPPM(img);
   
-  const char* arrow_img = "Green-Up-Arrow-32.ppm";
+  const char* arrow_img = "images/utilities/Green-Up-Arrow-32.ppm";
   ImageScroller *arrow_scroller = new ImageScroller(canvas,1,50);
   arrow_scroller->LoadPPM(arrow_img);
   //should not need to pass in the up arrow and down arrow...should automatically load those up when

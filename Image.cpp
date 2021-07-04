@@ -142,3 +142,6 @@ int ImageScroller::getPostX() {
     return horizontal_position_;
 }
 
+int ImageScroller::getPosEnd() {
+    return horizontal_position_ - curr_length;
+}

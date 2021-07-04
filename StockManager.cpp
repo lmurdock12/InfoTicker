@@ -73,26 +73,21 @@ void StockManager::resetLocations() {
 
 void StockManager::updateLocations(rgb_matrix::Canvas *c, int rightBoundry) {
 
-
-    //Reset canvas:
-    // for (int x = 0; x < c->width(); ++x) {
-    //     for (int y = 0; y < c->height(); ++y) {
-    //             c->SetPixel(x, y,0,0,0);
-    //     }
-    // }
-
     c->Clear();
     
     stock->Run(c);
     arrow->Run(c);
 
-    //cout << arrow->getPostX() << endl;
+    cout << arrow->getPostX() - arrow->getImageWidth() << endl;
     ticker->drawItem(c,rightBoundry);
     price->drawItem(c,rightBoundry);
     //arrow->Run(c);
 
+    //INFO: Images are negative based going right
+    //      Words are positive based going right
+    
     //cout << price->getPosEnd() << endl;
-    if (price->getPosEnd() == 0) {
+    if (arrow->getPosEnd() >= 0) {
         resetLocations();
     }
 

@@ -14,3 +14,9 @@ Copy file local to remote:
 scp uparrow.png pi@raspberrypi:/home/pi/InfoTicker
 
 scp Green-Up-Arrow-raw.ppm pi@<ip addr>:/home/pi/InfoTicker
+
+
+
+Features I want:
+
+Hookup to alexa..hey alexa...add this or that to the feed.

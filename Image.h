@@ -66,6 +66,7 @@ public:
     int getImageWidth();
     void setPosX(int pos);
     int getPostX();
+    int getPosEnd();
 
 
 private:
