@@ -46,7 +46,7 @@ StockManager::StockManager(ImageScroller* stock,Item* ticker,Item* price,ImageSc
 void StockManager::resetLocations() {
 
     int stockWidth = stock->getImageWidth();
-    cout << "width: " << stockWidth << endl;
+    ////cout << "width: " << stockWidth << endl;
     //Set stock starting point
 
     //TEMP:
@@ -64,21 +64,21 @@ void StockManager::resetLocations() {
     //arrow->setPosX(-64 + -1*(stockWidth + ticker->getPosEnd()));
     arrow->setPosX(-1*ticker->getPosEnd()  - 10);
 
-    cout << "stock: " << stock->getPostX() << " ticker: " << price->getPosX() << ", end: " << price->getPosEnd() << endl;
-    cout << price->getLength() << endl;
-    cout << arrow->getPostX() << endl;
+    ////cout << "stock: " << stock->getPostX() << " ticker: " << price->getPosX() << ", end: " << price->getPosEnd() << endl;
+    ////cout << price->getLength() << endl;
+    ////cout << arrow->getPostX() << endl;
 
 }
 
 
-void StockManager::updateLocations(rgb_matrix::Canvas *c, int rightBoundry) {
+bool StockManager::updateLocations(rgb_matrix::Canvas *c, int rightBoundry) {
 
-    c->Clear();
+
     
     stock->Run(c);
     arrow->Run(c);
 
-    cout << arrow->getPostX() - arrow->getImageWidth() << endl;
+    //cout << arrow->getPostX() - arrow->getImageWidth() << endl;
     ticker->drawItem(c,rightBoundry);
     price->drawItem(c,rightBoundry);
     //arrow->Run(c);
@@ -86,12 +86,20 @@ void StockManager::updateLocations(rgb_matrix::Canvas *c, int rightBoundry) {
     //INFO: Images are negative based going right
     //      Words are positive based going right
     
-    //cout << price->getPosEnd() << endl;
+    ////cout << price->getPosEnd() << endl;
     if (arrow->getPosEnd() >= 0) {
         resetLocations();
+        return true;
+    } else {
+        return false;
     }
 
 
+}
+
+
+int StockManager::getPosEnd() {
+    return arrow->getPosEnd();
 }
 
 //TODO: Create a function that gets the initial values of everything and sets them to the apporpriate spot

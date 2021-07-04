@@ -20,3 +20,13 @@ scp Green-Up-Arrow-raw.ppm pi@<ip addr>:/home/pi/InfoTicker
 Features I want:
 
 Hookup to alexa..hey alexa...add this or that to the feed.
+
+
+TODO:
+
+Fix raspberrypi timeout issue
+Fix reset item flicker
+Fix the tesla StockManager class
+Enhance scroller past one image on screen at a time:
+    //When an image reaches the end reset it and put in readyqueue
+    //When the currImage is < the end of the board... add the next image from ready queue

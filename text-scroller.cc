@@ -91,7 +91,7 @@ void Item::drawItem(rgb_matrix::Canvas *c, int rightBoundry) {
 
         //Todo: add outline font drawing
 
-        //cout << "Current X: " << x << " length: " << length << " end edge: " << x + length << endl;
+        ////cout << "Current X: " << x << " length: " << length << " end edge: " << x + length << endl;
         length = rgb_matrix::DrawText(c,*fontPtr,x,y,currColor,
                     NULL,name.c_str(),letterSpacing);
 
@@ -329,8 +329,8 @@ int main(int argc, char *argv[]) {
                            line.c_str(), letter_spacing - 2);
     }*/
     
-    //cout << "size: "  << currentItems.size() << "curr index: " << currInd << endl;
-    cout << " curr item size: "  << currentItems.size() << "ready item size: " << readyItems.size() << endl;
+    ////cout << "size: "  << currentItems.size() << "curr index: " << currInd << endl;
+    //cout << " curr item size: "  << currentItems.size() << "ready item size: " << readyItems.size() << endl;
     for(it = currentItems.begin(); it != currentItems.end();) {
 
       int currInd = std::distance(currentItems.begin(),it);
@@ -345,7 +345,7 @@ int main(int argc, char *argv[]) {
         (*it)->rightBound = false;
         (*it)->leftBound = false;
         currentItems.erase(it);
-        cout << "READY SIZE: " << readyItems.size() << " " << currentItems.size() << endl;
+        //cout << "READY SIZE: " << readyItems.size() << " " << currentItems.size() << endl;
 
         continue;
         //dont increment it here:
@@ -353,9 +353,9 @@ int main(int argc, char *argv[]) {
       }
 
       if(currInd==(currentItems.size()-1) && (*it)->rightBound) {
-        //cout << "yes" << endl;
+        ////cout << "yes" << endl;
         if(!readyItems.empty()) {
-          cout << "no" << endl;
+          //cout << "no" << endl;
           currentItems.push_back(readyItems.front());
           readyItems.pop();
           break;

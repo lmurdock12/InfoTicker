@@ -151,7 +151,7 @@ int main(int argc, char *argv[]) {
   /*
    * Load font. This needs to be a filename with a bdf bitmap font.
    */
-  cout << bdf_font_file << endl;
+  //cout << bdf_font_file << endl;
   rgb_matrix::Font font;
   if (!font.LoadFont(bdf_font_file)) {
     fprintf(stderr, "Couldn't load font '%s'\n", bdf_font_file);
@@ -199,24 +199,25 @@ int main(int argc, char *argv[]) {
   int y = 30;//y_orig;
 
   Item* secondItem = new Item(x,15,"FORD",letter_spacing,&font,color, x_orig);
-  Item* firstItem = new Item(x,y,"NVDIA",letter_spacing,&font,color,x_orig);
+  Item* firstItem = new Item(x,y,"TSLA",letter_spacing,&font,color,x_orig);
   Item* third = new Item(x,y,"MRVL  ",letter_spacing,&font,color,x_orig);
   Item* fourth = new Item(x,y,"MSFT  ",letter_spacing,&font,color,x_orig);
   Item* fifth = new Item(x,y,"AAPL ",letter_spacing,&font,color,x_orig);
 
   Item* price = new Item(x,30,"11.51  ",letter_spacing,&font,negative_color,x_orig);
+  Item* price2 = new Item(x,30,"69.420  ",letter_spacing,&font,negative_color,x_orig);
 
 
-  queue<Item*> readyItems;
+  // queue<Item*> readyItems;
 
-  vector<Item*> currentItems;
-  vector<Item*>::iterator it;
+  // vector<Item*> currentItems;
+  // vector<Item*>::iterator it;
 
-  readyItems.push(secondItem);
-  currentItems.push_back(firstItem);
-  readyItems.push(third);
-  readyItems.push(fourth);
-  readyItems.push(fifth);
+  // readyItems.push(secondItem);
+  // currentItems.push_back(firstItem);
+  // readyItems.push(third);
+  // readyItems.push(fourth);
+  // readyItems.push(fifth);
   //currentItems.push_back(secondItem);
   
   //Using simplified image class right now...could probably be improved in the future
@@ -224,34 +225,108 @@ int main(int argc, char *argv[]) {
   const char* img = "./images/logos/ford-32-2.ppm";
   ImageScroller *scroller = new ImageScroller(canvas,1,50);
   scroller->LoadPPM(img);
+
+const char* img2 = "tesla-final-32.ppm";
+ImageScroller *scroller2 = new ImageScroller(canvas,1,50);
+scroller2->LoadPPM(img2);
+  
   
   const char* arrow_img = "images/utilities/Green-Up-Arrow-32.ppm";
   ImageScroller *arrow_scroller = new ImageScroller(canvas,1,50);
   arrow_scroller->LoadPPM(arrow_img);
+
+  ImageScroller *arrow_scroller2 = new ImageScroller(canvas,1,50);
+  arrow_scroller2->LoadPPM(arrow_img);
   //should not need to pass in the up arrow and down arrow...should automatically load those up when
   //initializing a new stockManager class
-  
   
   //WRITE IN NOTES:
   //images must be scaled to 32 bit p6 (raw) ppm
 
   StockManager* mainScroller = new StockManager(scroller,secondItem,price,arrow_scroller);
+  mainScroller->resetLocations();
+  mainScroller->updateLocations(offscreen_canvas,board_size);
+  //offscreen_canvas = canvas->SwapOnVSync(offscreen_canvas);
+  mainScroller->resetLocations();
+
+  StockManager* mainScroller2 = new StockManager(scroller2,firstItem,price2,arrow_scroller2);
+  mainScroller2->resetLocations();
+  mainScroller2->updateLocations(offscreen_canvas,board_size);
+  //offscreen_canvas = canvas->SwapOnVSync(offscreen_canvas);
+  mainScroller2->resetLocations();
+
+  offscreen_canvas->Clear();
+
+
+
+  queue<StockManager*> readyItems;
+  vector<StockManager*> currItems;
+  vector<StockManager*>::iterator it;
+  currItems.push_back(mainScroller);
+  //currItems.push_back(mainScroller2);
+  //readyItems.push(mainScroller2);
 
 
   int length = 0;
   struct timespec next_frame = {0, 0};
 
-  mainScroller->resetLocations();
-  mainScroller->updateLocations(offscreen_canvas,board_size);
-  offscreen_canvas = canvas->SwapOnVSync(offscreen_canvas);
-  mainScroller->resetLocations();
 
 
+
+//Multi stock scroller:
+
+//Use two queues to keep track of the items we are currently renering, and what we are rendering next
+//Inside the program loop:
+  //1. Loop through all the stocks in CurrItems
+    //a. Render a given StockManager
+    //b. check if the end is >= 0:
+      //reset and add to readyItems if so
+  //If we removed a stock from currItems, add the next stock from ready to currItems
+  bool addNew;
+  //cout << "Board size: " << board_size << endl;
   while (!interrupt_received && loops != 0) {
-    //offscreen_canvas->Fill(bg_color.r, bg_color.g, bg_color.b);
-    mainScroller->updateLocations(offscreen_canvas,board_size);
+
+    offscreen_canvas->Clear();
+    offscreen_canvas->Fill(bg_color.r, bg_color.g, bg_color.b);
+    //mainScroller->updateLocations(offscreen_canvas,board_size);
     //usleep(50*1000);
 
+    addNew = false;
+    for(it = currItems.begin(); it!=currItems.end();) {
+      int currInd = std::distance(currItems.begin(),it);
+      //cout << "pos end: " << (*it)->getPosEnd() << endl;
+      bool reset = (*it)->updateLocations(offscreen_canvas,board_size);
+      if(currInd == 0 && reset) {
+        //Location was reset..remove from curr items
+        ////cout << "REMOVING ITEM" << endl;
+        readyItems.push(*it);
+        currItems.erase(it);
+        addNew = true;
+
+        //Special case if only 1 value in queue
+        if (currItems.size() == 0) {
+          if(!readyItems.empty()) {
+            currItems.push_back(readyItems.front());
+            readyItems.pop();
+          }
+          break;
+        }
+
+      }
+
+      if (currInd == (currItems.size()-1) && (*it)->getPosEnd() >= -58) {
+        if(!readyItems.empty()) {
+          currItems.push_back(readyItems.front());
+          readyItems.pop();
+          break;
+        }
+      }
+      ////cout << "SECOND AND BEYOND" << endl;
+
+      it++;
+    }
+
+    //mainScroller->updateLocations(offscreen_canvas,board_size);
 
     // Make sure render-time delays are not influencing scroll-time
     if (speed > 0) {

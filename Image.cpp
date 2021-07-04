@@ -61,11 +61,11 @@ void ImageScroller::Run(Canvas* offscreen_canvas) {
 
 const int screen_height = offscreen_canvas->height();
 const int screen_width = offscreen_canvas->width();
-    //cout << "Screen height x width: " << screen_height << " " << screen_width << endl;
-    //cout << "Image height and width: " << current_image_.height << " " << current_image_.width << endl;
+    ////cout << "Screen height x width: " << screen_height << " " << screen_width << endl;
+    ////cout << "Image height and width: " << current_image_.height << " " << current_image_.width << endl;
     //Where to store image height and width?
 
-    //cout << "2.0" << endl;
+    ////cout << "2.0" << endl;
 
     //Code for updating to new image if needed
     {
@@ -85,11 +85,11 @@ const int screen_width = offscreen_canvas->width();
     //continue;
     }
 
-    //cout << "horizontal position: " << horizontal_position_ << endl;
+    ////cout << "horizontal position: " << horizontal_position_ << endl;
 
     for (int x = 0; x < screen_width; ++x) {
         for (int y = 0; y < screen_height; ++y) {
-            //cout << ""
+            ////cout << ""
             //const Pixel &p = current_image_.getPixel((horizontal_position_ + x) % current_image_.width, y);
             
             //if greater then height and width keep the existing pixel color.
@@ -97,10 +97,10 @@ const int screen_width = offscreen_canvas->width();
             const Pixel &p = current_image_.getPixel((horizontal_position_ + x), y);
 
             /*if(p.red == 255) {
-                cout << "---------" << endl;
+                //cout << "---------" << endl;
                 exit(0);
             }*/
-            //cout << int(p.red) << "." << int(p.green) << "." << int(p.blue) << endl;
+            ////cout << int(p.red) << "." << int(p.green) << "." << int(p.blue) << endl;
             if (int(p.red) != 0 || int(p.green) != 0 || int(p.blue) != 0) {
                 offscreen_canvas->SetPixel(x, y,p.red, p.green, p.blue);
             }
@@ -108,7 +108,7 @@ const int screen_width = offscreen_canvas->width();
 
         }
     }
-    //cout << offscreen_ << endl;
+    ////cout << offscreen_ << endl;
     //offscreen_canvas = matrix_->SwapOnVSync(offscreen_);
     horizontal_position_ += scroll_jumps_;
     //if (horizontal_position_ < 0) horizontal_position_ = current_image_.width;

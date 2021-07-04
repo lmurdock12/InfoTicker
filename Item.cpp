@@ -44,7 +44,7 @@ void Item::drawItem(rgb_matrix::Canvas *c, int rightBoundry) {
 
         //Todo: add outline font drawing
 
-        //cout << "Current X: " << x << " length: " << length << " end edge: " << x + length << endl;
+        ////cout << "Current X: " << x << " length: " << length << " end edge: " << x + length << endl;
         length = rgb_matrix::DrawText(c,*fontPtr,x,y,currColor,
                     NULL,name.c_str(),letterSpacing);
 

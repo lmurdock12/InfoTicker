@@ -19,8 +19,8 @@ public:
     StockManager(ImageScroller* stock, Item* ticker, Item* price, ImageScroller* arrow);
     void resetLocations();
     
-    void updateLocations(rgb_matrix::Canvas *c, int rightBoundry); //refractor arguments at some point
-
+    bool updateLocations(rgb_matrix::Canvas *c, int rightBoundry); //refractor arguments at some point
+    int getPosEnd();
 private:
 
 
