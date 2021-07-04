@@ -264,7 +264,7 @@ scroller2->LoadPPM(img2);
   vector<StockManager*>::iterator it;
   currItems.push_back(mainScroller);
   //currItems.push_back(mainScroller2);
-  //readyItems.push(mainScroller2);
+  readyItems.push(mainScroller2);
 
 
   int length = 0;
@@ -311,6 +311,7 @@ scroller2->LoadPPM(img2);
           }
           break;
         }
+        continue;
 
       }
 
