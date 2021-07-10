@@ -15,6 +15,9 @@
 #include <tuple>
 #include <iostream>
 #include <queue>
+#include "crow_all.h"
+#include <thread>
+
 
 using namespace std;
 using namespace rgb_matrix;
@@ -74,7 +77,24 @@ static void add_micros(struct timespec *accumulator, long micros) {
   }
 }
 
+// #define CROW_MAIN
+
+// void runClient() {
+//     crow::SimpleApp app; //define your crow application
+
+//     //define your endpoint at the root directory
+//     CROW_ROUTE(app, "/")([](){
+//         return "Hello world";
+//     });
+
+//     //set the port, set the app to run on multiple threads, and run the app
+//     app.port(18081).multithreaded().run();
+
+// }
+
 int main(int argc, char *argv[]) {
+  //std::thread worker(runClient);
+
   RGBMatrix::Options matrix_options;
   rgb_matrix::RuntimeOptions runtime_opt;
   if (!rgb_matrix::ParseOptionsFromFlags(&argc, &argv,
@@ -199,13 +219,13 @@ int main(int argc, char *argv[]) {
   int y = 30;//y_orig;
 
   Item* secondItem = new Item(x,15,"FORD",letter_spacing,&font,color, x_orig);
-  Item* firstItem = new Item(x,y,"TSLA",letter_spacing,&font,color,x_orig);
-  Item* third = new Item(x,y,"MRVL  ",letter_spacing,&font,color,x_orig);
-  Item* fourth = new Item(x,y,"MSFT  ",letter_spacing,&font,color,x_orig);
-  Item* fifth = new Item(x,y,"AAPL ",letter_spacing,&font,color,x_orig);
+  Item* firstItem = new Item(x,15,"TSLA",letter_spacing,&font,color,x_orig);
+  // Item* third = new Item(x,y,"MRVL  ",letter_spacing,&font,color,x_orig);
+  // Item* fourth = new Item(x,y,"MSFT  ",letter_spacing,&font,color,x_orig);
+  // Item* fifth = new Item(x,y,"AAPL ",letter_spacing,&font,color,x_orig);
 
-  Item* price = new Item(x,30,"11.51  ",letter_spacing,&font,negative_color,x_orig);
-  Item* price2 = new Item(x,30,"69.420  ",letter_spacing,&font,negative_color,x_orig);
+  Item* price = new Item(x,30,"11.51",letter_spacing,&font,negative_color,x_orig);
+  Item* price2 = new Item(x,30,"585.30",letter_spacing,&font,negative_color,x_orig);
 
 
   // queue<Item*> readyItems;
@@ -354,6 +374,6 @@ scroller2->LoadPPM(img2);
   // Finished. Shut down the RGB matrix.
   canvas->Clear();
   delete canvas;
-
+  //worker.join();
   return 0;
 }
