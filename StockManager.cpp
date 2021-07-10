@@ -58,11 +58,17 @@ void StockManager::resetLocations() {
     //Set Text starting point
     //TODO: update so not static 64 (i.e use rightBoundry)
     //ticker->setPosX(64+stockWidth+30);
-    ticker->setPosX(64 + stockWidth + 5);//+stockWidth+10);
-    price->setPosX(64 + stockWidth + 5);
+    ticker->setPosX(64 + stockWidth + 3);//+stockWidth+10);
+    price->setPosX(64 + stockWidth + 3);
 
     //arrow->setPosX(-64 + -1*(stockWidth + ticker->getPosEnd()));
-    arrow->setPosX(-1*ticker->getPosEnd()  - 10);
+    //cout << price->getPosEnd() << endl;
+    if (price->getPosEnd() > ticker->getPosEnd()) {
+        arrow->setPosX(-1*price->getPosEnd());
+    } else {
+        arrow->setPosX(-1*ticker->getPosEnd());
+    }
+    
 
     ////cout << "stock: " << stock->getPostX() << " ticker: " << price->getPosX() << ", end: " << price->getPosEnd() << endl;
     ////cout << price->getLength() << endl;
