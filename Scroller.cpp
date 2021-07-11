@@ -230,9 +230,9 @@ int main(int argc, char *argv[]) {
   ImageScroller *scroller = new ImageScroller(canvas,1,50);
   scroller->LoadPPM(img);
 
-const char* img2 = "tesla-final-32.ppm";
-ImageScroller *scroller2 = new ImageScroller(canvas,1,50);
-scroller2->LoadPPM(img2);
+  const char* img2 = "tesla-final-32.ppm";
+  ImageScroller *scroller2 = new ImageScroller(canvas,1,50);
+  scroller2->LoadPPM(img2);
   
   
   const char* arrow_img = "images/utilities/Green-Up-Arrow-32.ppm";
@@ -288,6 +288,7 @@ scroller2->LoadPPM(img2);
   //If we removed a stock from currItems, add the next stock from ready to currItems
   bool addNew;
   //cout << "Board size: " << board_size << endl;
+  /*
   while (!interrupt_received && loops != 0) {
 
     offscreen_canvas->Clear();
@@ -349,11 +350,12 @@ scroller2->LoadPPM(img2);
     
     if (speed <= 0) pause();  // Nothing to scroll.
   }
+  */
 
 
 
 
-
+  std::cout << "Exiting Scroller...goodbye" << std::endl;
 
   // Finished. Shut down the RGB matrix.
   canvas->Clear();
