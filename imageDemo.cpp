@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
     //The specifc parameter with no usage goes here
 
     demo_parameter = argv[optind];
-    cout << demo_parameter << endl;
+    //cout << demo_parameter << endl;
     }
 
     if (demo < 0) {
@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
         ImageScroller *scroller = new ImageScroller(matrix,
                                                     demo == 1 ? 1 : -1,
                                                     scroll_ms);
-        cout << demo_parameter << endl;
+        //cout << demo_parameter << endl;
         if (!scroller->LoadPPM(demo_parameter))
         return 1;
         demo_runner = scroller;

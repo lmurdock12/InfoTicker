@@ -15,16 +15,17 @@ public:
 
     //StockManager(ImageScroller* stock,Item* ticker, ImageScroller* status = nullptr,
                // Item* price = nullptr, Item* diff = nullptr); 
-    StockManager(ImageScroller* stock,Item* ticker);
-
+    //StockManager(ImageScroller* stock,Item* ticker, Item* price);
+    StockManager(ImageScroller* stock, Item* ticker, Item* price, ImageScroller* arrow);
     void resetLocations();
     
-    void updateLocations(rgb_matrix::Canvas *c, int rightBoundry); //refractor arguments at some point
-
+    bool updateLocations(rgb_matrix::Canvas *c, int rightBoundry); //refractor arguments at some point
+    int getPosEnd();
 private:
 
 
     ImageScroller* stock = nullptr;
+    ImageScroller* arrow = nullptr;
     ImageScroller* status = nullptr;
     Item* ticker = nullptr;
     Item* price = nullptr;

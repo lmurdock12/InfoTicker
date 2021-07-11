@@ -40,7 +40,7 @@ bool ImageScroller::LoadPPM(const char *filename) {
     fclose(f);
     fprintf(stderr, "Read image '%s' with %dx%d\n", filename,
             new_width, new_height);
-    horizontal_position_ = -89;
+    horizontal_position_ = 1;
     MutexLock l(&mutex_new_image_);
     new_image_.Delete();  // in case we reload faster than is picked up
     new_image_.image = new_image;
@@ -61,11 +61,11 @@ void ImageScroller::Run(Canvas* offscreen_canvas) {
 
 const int screen_height = offscreen_canvas->height();
 const int screen_width = offscreen_canvas->width();
-    //cout << "Screen height x width: " << screen_height << " " << screen_width << endl;
-    //cout << "Image height and width: " << current_image_.height << " " << current_image_.width << endl;
+    ////cout << "Screen height x width: " << screen_height << " " << screen_width << endl;
+    ////cout << "Image height and width: " << current_image_.height << " " << current_image_.width << endl;
     //Where to store image height and width?
 
-    //cout << "2.0" << endl;
+    ////cout << "2.0" << endl;
 
     //Code for updating to new image if needed
     {
@@ -79,27 +79,36 @@ const int screen_width = offscreen_canvas->width();
     }
 
 
+    //check what if I need this
     if (!current_image_.IsValid()) {
     usleep(100 * 1000);
     //continue;
     }
 
-    cout << "horizontal position: " << horizontal_position_ << endl;
+    ////cout << "horizontal position: " << horizontal_position_ << endl;
 
     for (int x = 0; x < screen_width; ++x) {
-    for (int y = 0; y < screen_height; ++y) {
-        //cout << ""
-        //const Pixel &p = current_image_.getPixel((horizontal_position_ + x) % current_image_.width, y);
-        
-        //if greater then height and width keep the existing pixel color.
-        
-        const Pixel &p = current_image_.getPixel((horizontal_position_ + x), y);
+        for (int y = 0; y < screen_height; ++y) {
+            ////cout << ""
+            //const Pixel &p = current_image_.getPixel((horizontal_position_ + x) % current_image_.width, y);
+            
+            //if greater then height and width keep the existing pixel color.
+            
+            const Pixel &p = current_image_.getPixel((horizontal_position_ + x), y);
 
-        
-        offscreen_canvas->SetPixel(x, y,p.red, p.green, p.blue);
+            /*if(p.red == 255) {
+                //cout << "---------" << endl;
+                exit(0);
+            }*/
+            ////cout << int(p.red) << "." << int(p.green) << "." << int(p.blue) << endl;
+            if (int(p.red) != 0 || int(p.green) != 0 || int(p.blue) != 0) {
+                offscreen_canvas->SetPixel(x, y,p.red, p.green, p.blue);
+            }
+            
+
+        }
     }
-    }
-    //cout << offscreen_ << endl;
+    ////cout << offscreen_ << endl;
     //offscreen_canvas = matrix_->SwapOnVSync(offscreen_);
     horizontal_position_ += scroll_jumps_;
     //if (horizontal_position_ < 0) horizontal_position_ = current_image_.width;
@@ -133,3 +142,6 @@ int ImageScroller::getPostX() {
     return horizontal_position_;
 }
 
+int ImageScroller::getPosEnd() {
+    return horizontal_position_ - curr_length;
+}

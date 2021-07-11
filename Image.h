@@ -66,6 +66,7 @@ public:
     int getImageWidth();
     void setPosX(int pos);
     int getPostX();
+    int getPosEnd();
 
 
 private:
@@ -84,7 +85,11 @@ private:
     inline bool IsValid() { return image && height > 0 && width > 0; }
     const Pixel &getPixel(int x, int y) {
       static Pixel black;
+      static Pixel red;
+      red.red = 255;
       if (x < 0 || x >= width || y < 0 || y >= height) return black;
+      //if(x==0) return red;
+      //if(x==(width-1)) return red;
       return image[x + width * y];
     }
 
