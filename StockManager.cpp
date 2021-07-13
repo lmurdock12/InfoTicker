@@ -20,25 +20,35 @@ s
 */
 
 
-/*StockManager::StockManager(ImageScroller* stock,Item* ticker, ImageScroller* status = nullptr,
-                            Item* price = nullptr, Item* diff = nullptr) {
+StockManager::StockManager(RGBMatrix* canv, Font* txtFont, ImageScroller* stock,string symbol,int currPrice,int startPrice) {
+    //TODO: eventually everything should maybe be passed in raw including stock image and txtFont?
 
+    string upArrowPath = "configuration/images/utilities/Green-Up-Arrow-32.ppm";
+    //sting downArrowPath = "configuration/images/utilities/Green-Up-Arrow-32.ppm";
+    upArrow = new ImageScroller(canv,1,50);
+    //downArrow = new ImageScroller(canvas,1,50);
+    upArrow->LoadPPM(upArrowPath.c_str());
+    //downArrow->LoadPPM(downArrowPath.c_str());
 
+    //Have the current and open priced passed in
+    this->currPrice = currPrice;
+    this->startPrice = startPrice;
+    this->currDiff = currPrice - startPrice;
+
+    //Create the the textual items for the Stock display
+    ticker = new Item(64,15,symbol,0,txtFont,this->white_color,64);
+    if (this->currDiff < 0) {
+        price = new Item(64,15,to_string(currPrice).c_str(),0,txtFont,this->red_color,64);
+        //TODO: Add diff txt for red
+    } else {
+        //TODO: Add diff txt for green
+        price = new Item(64,15,to_string(currPrice).c_str(),0,txtFont,this->green_color,64);
+    }
 
     this->stock = stock;
-    this->status = status;
     this->ticker = ticker;
     this->price = price;
-    this->diff = diff;
-
-}*/
-
-StockManager::StockManager(ImageScroller* stock,Item* ticker,Item* price,ImageScroller* arrow) {
-
-    this->stock = stock;
-    this->ticker = ticker;
-    this->price = price;
-    this->arrow = arrow;
+    this->arrow = upArrow;
 
 }
 
@@ -107,6 +117,3 @@ bool StockManager::updateLocations(rgb_matrix::Canvas *c, int rightBoundry) {
 int StockManager::getPosEnd() {
     return arrow->getPosEnd();
 }
-
-//TODO: Create a function that gets the initial values of everything and sets them to the apporpriate spot
-//TODO: Create a function that manages the scrolling. 

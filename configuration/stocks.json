@@ -1,0 +1,6 @@
+{
+    "stocks":[
+        {"name":"Microsoft","symbol":"MSFT"},
+        {"name":"Ford","symbol":"F"}
+    ]
+}

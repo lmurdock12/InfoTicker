@@ -38,6 +38,7 @@ Item::Item() {
 
 void Item::setName(string newName) {
     name = newName;
+    //TODO: Will need to reset the cords of everything
 }
 
 void Item::drawItem(rgb_matrix::Canvas *c, int rightBoundry) {
@@ -65,8 +66,6 @@ void Item::drawItem(rgb_matrix::Canvas *c, int rightBoundry) {
         }
 
     }
-
-
 
 
 int Item::getWidth() {

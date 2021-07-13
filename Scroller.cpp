@@ -17,9 +17,18 @@
 #include <queue>
 #include <thread>
 
+//stock imports
+#include <fstream>
+#define CPPHTTPLIB_OPENSSL_SUPPORT
+#include "external/httplib.hpp"
+
+#include "external/json.hpp"
+
 
 using namespace std;
 using namespace rgb_matrix;
+
+using json = nlohmann::json;
 
 
 #include "StockManager.h"
@@ -76,6 +85,10 @@ static void add_micros(struct timespec *accumulator, long micros) {
   }
 }
 
+inline bool exist_test(const string file_path) {
+  ifstream f(file_path);
+  return f.good();
+}
 
 int main(int argc, char *argv[]) {
 
@@ -202,6 +215,92 @@ int main(int argc, char *argv[]) {
   int x = x_orig;
   int y = 30;//y_orig;
 
+
+  //TODO: when updating price we need to draw the item one time to get the new length
+
+
+  //Initialize stocks
+
+  //Read the stocks to use
+  std::cout << "Opening stocks.json..." << std::endl;
+  std::ifstream stocks;
+  stocks.open("configuration/stocks.json");
+
+  if (!stocks.is_open()) {
+    std::cout << "Could not open file!" << std::endl;
+    std::cout << "Exiting..." << std::endl;
+    exit(0);
+  }
+
+  json rawStockList;
+  stocks >> rawStockList;
+
+  //Client for calling the finhub api
+  httplib::SSLClient cli("finnhub.io");
+
+  for (int i=0;i<rawStockList["stocks"].size();i++) {
+    //std::cout << "rawStockList["stocks"][i]["name"] << std::endl;
+    std::map<string,string> currStock = rawStockList["stocks"][i];
+    std::cout << currStock["name"] << std::endl;
+
+    Item* name = new Item(x,15,currStock["symbol"],letter_spacing,&font,color,x_orig);
+    ImageScroller* image;
+    Item* price;
+
+    string imageLocation = "configuration/images/logos/";
+    imageLocation += currStock["symbol"] + ".ppm";
+    
+    //std::cout << "testing file path: " << imageLocation << std::endl;
+    if (exist_test(imageLocation)) {
+      std::cout << "Found " << currStock["name"] << "'s logo" << std::endl;
+      image = new ImageScroller(canvas,1,50);
+      image->LoadPPM(imageLocation.c_str());
+
+    } else {
+      std::cout << "Could not find image for " << currStock["name"] << std::endl;
+      std::cout << "WARNING: Failed to add " << currStock["name"] << " to stock scroller!" << std::endl;
+      continue;
+    }
+
+  
+
+    string finnHubToken = "c3ktc12ad3idu4kfmse0";
+    //Alpha vintage token: 23LPQNOOOJSFP5T2
+    string quoteURL = "/api/v1/quote?symbol=" + currStock["symbol"] + "&token=" + finnHubToken;
+
+    std::cout << "Attempting to grab stock quote" << std::endl;
+    //https://finnhub.io/api/v1/quote?symbol=AAPL&token=c3ktc12ad3idu4kfmse0
+    auto res = cli.Get(quoteURL.c_str());
+    if (res) {
+      if (res->status == 200) {
+        //std::cout << res->body << std::endl;
+        auto j1 = json::parse(res->body);
+        price = new Item(x,15,j1["c"],letter_spacing,&font,color,x_orig);
+        std::cout << j1 << std::endl;
+        //std::cout << j1 << std::endl;
+        //std::cout << j1.at("c") << std::endl;
+        //std::cout << j1["c"] << std::endl;
+        //std::string s = j1.dump();
+        //std::cout << s << std::endl;  
+      }
+    } else {
+      auto err = res.error();
+      std::cout << err << std::endl;
+      exit(1);
+    }
+    auto quote = json::parse(res->body);
+    //TODO: Add better validation (ensure we got valid data with the http response)
+
+    //Create a StockManager class with all of the gathered componets
+    std::cout << "Creating stock manager for: " << currStock["symbol"] << std::endl;
+    StockManager* stock = new StockManager(canvas,&font,image,currStock["symbol"],quote["c"],quote["o"]);
+
+  }
+
+
+  
+
+  /*
   Item* secondItem = new Item(x,15,"FORD",letter_spacing,&font,color, x_orig);
   Item* firstItem = new Item(x,15,"TSLA",letter_spacing,&font,color,x_orig);
   // Item* third = new Item(x,y,"MRVL  ",letter_spacing,&font,color,x_orig);
@@ -211,19 +310,6 @@ int main(int argc, char *argv[]) {
   Item* price = new Item(x,30,"11.51",letter_spacing,&font,negative_color,x_orig);
   Item* price2 = new Item(x,30,"585.30",letter_spacing,&font,negative_color,x_orig);
 
-
-  // queue<Item*> readyItems;
-
-  // vector<Item*> currentItems;
-  // vector<Item*>::iterator it;
-
-  // readyItems.push(secondItem);
-  // currentItems.push_back(firstItem);
-  // readyItems.push(third);
-  // readyItems.push(fourth);
-  // readyItems.push(fifth);
-  //currentItems.push_back(secondItem);
-  
   //Using simplified image class right now...could probably be improved in the future
   //with the more advanced class 
   const char* img = "./images/logos/ford-32-2.ppm";
@@ -247,13 +333,13 @@ int main(int argc, char *argv[]) {
   //WRITE IN NOTES:
   //images must be scaled to 32 bit p6 (raw) ppm
 
-  StockManager* mainScroller = new StockManager(scroller,secondItem,price,arrow_scroller);
+  StockManager* mainScroller = new StockManager(canvas,scroller,secondItem,price,arrow_scroller);
   mainScroller->resetLocations();
   mainScroller->updateLocations(offscreen_canvas,board_size);
   //offscreen_canvas = canvas->SwapOnVSync(offscreen_canvas);
   mainScroller->resetLocations();
 
-  StockManager* mainScroller2 = new StockManager(scroller2,firstItem,price2,arrow_scroller2);
+  StockManager* mainScroller2 = new StockManager(canvas,scroller2,firstItem,price2,arrow_scroller2);
   mainScroller2->resetLocations();
   mainScroller2->updateLocations(offscreen_canvas,board_size);
   //offscreen_canvas = canvas->SwapOnVSync(offscreen_canvas);
@@ -261,7 +347,7 @@ int main(int argc, char *argv[]) {
 
   offscreen_canvas->Clear();
 
-
+  
 
   queue<StockManager*> readyItems;
   vector<StockManager*> currItems;
@@ -273,7 +359,7 @@ int main(int argc, char *argv[]) {
 
   int length = 0;
   struct timespec next_frame = {0, 0};
-
+  */
 
 
 
