@@ -20,7 +20,7 @@ s
 */
 
 
-StockManager::StockManager(RGBMatrix* canv, Font* txtFont, ImageScroller* stock,string symbol,int currPrice,int startPrice) {
+StockManager::StockManager(RGBMatrix* canv, Font* txtFont, ImageScroller* stock,string symbol,double currPrice,double startPrice) {
     //TODO: eventually everything should maybe be passed in raw including stock image and txtFont?
 
     string upArrowPath = "configuration/images/utilities/Green-Up-Arrow-32.ppm";
@@ -35,14 +35,20 @@ StockManager::StockManager(RGBMatrix* canv, Font* txtFont, ImageScroller* stock,
     this->startPrice = startPrice;
     this->currDiff = currPrice - startPrice;
 
+    //Convert the price to a string with the designated amount of precision
+    std::stringstream pStream;
+    pStream << std::fixed << std::setprecision(2) << currPrice;
+    std::string priceStr = pStream.str();
+
     //Create the the textual items for the Stock display
     ticker = new Item(64,15,symbol,0,txtFont,this->white_color,64);
+    //yes
     if (this->currDiff < 0) {
-        price = new Item(64,15,to_string(currPrice).c_str(),0,txtFont,this->red_color,64);
+        price = new Item(64,30,priceStr.c_str(),0,txtFont,this->red_color,64);
         //TODO: Add diff txt for red
     } else {
         //TODO: Add diff txt for green
-        price = new Item(64,15,to_string(currPrice).c_str(),0,txtFont,this->green_color,64);
+        price = new Item(64,30,priceStr.c_str(),0,txtFont,this->green_color,64);
     }
 
     this->stock = stock;

@@ -294,8 +294,8 @@ int main(int argc, char *argv[]) {
     auto quote = json::parse(res->body);
     //TODO: Add better validation (ensure we got valid data with the http response)
     //TODO: see if these two int variables are needed or we can just directly pass in as arguments
-    int currentPrice = quote["c"];
-    int openPrice = quote["o"];
+    double currentPrice = quote["c"];
+    double openPrice = quote["o"];
     std::cout << quote << std::endl;
     std::cout << "Open price: " << openPrice << ", currPrice: " << currentPrice << std::endl;
     //Create a StockManager class with all of the gathered componets
