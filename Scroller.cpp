@@ -218,7 +218,8 @@ int main(int argc, char *argv[]) {
 
   //TODO: when updating price we need to draw the item one time to get the new length
 
-
+  queue<StockManager*> readyItems;
+  vector<StockManager*> currItems;
   //Initialize stocks
 
   //Read the stocks to use
@@ -273,10 +274,12 @@ int main(int argc, char *argv[]) {
     auto res = cli.Get(quoteURL.c_str());
     if (res) {
       if (res->status == 200) {
-        //std::cout << res->body << std::endl;
+        std::cout << quoteURL << std::endl;
+        std::cout << res->body << std::endl;
         auto j1 = json::parse(res->body);
-        price = new Item(x,15,j1["c"],letter_spacing,&font,color,x_orig);
         std::cout << j1 << std::endl;
+        //price = new Item(x,15,j1["c"],letter_spacing,&font,color,x_orig);
+        //std::cout << j1 << std::endl;
         //std::cout << j1 << std::endl;
         //std::cout << j1.at("c") << std::endl;
         //std::cout << j1["c"] << std::endl;
@@ -290,36 +293,47 @@ int main(int argc, char *argv[]) {
     }
     auto quote = json::parse(res->body);
     //TODO: Add better validation (ensure we got valid data with the http response)
-
+    //TODO: see if these two int variables are needed or we can just directly pass in as arguments
+    int currentPrice = quote["c"];
+    int openPrice = quote["o"];
+    std::cout << quote << std::endl;
+    std::cout << "Open price: " << openPrice << ", currPrice: " << currentPrice << std::endl;
     //Create a StockManager class with all of the gathered componets
     std::cout << "Creating stock manager for: " << currStock["symbol"] << std::endl;
-    StockManager* stock = new StockManager(canvas,&font,image,currStock["symbol"],quote["c"],quote["o"]);
+    StockManager* stock = new StockManager(canvas,&font,image,currStock["symbol"],currentPrice,openPrice);
+    
+    stock->resetLocations();
+    stock->updateLocations(offscreen_canvas,board_size);
+    //offscreen_canvas = canvas->SwapOnVSync(offscreen_canvas);
+    stock->resetLocations();
+    /*
+    Add the first stockmanager to the currItems
+    Add subsequent stock managers to the readyItems
+
+    */
+    if (currItems.size() == 0) {
+      currItems.push_back(stock);
+    } else {
+      readyItems.push(stock);
+    }
+
 
   }
 
 
-  
+  offscreen_canvas->Clear();
 
   /*
   Item* secondItem = new Item(x,15,"FORD",letter_spacing,&font,color, x_orig);
   Item* firstItem = new Item(x,15,"TSLA",letter_spacing,&font,color,x_orig);
   // Item* third = new Item(x,y,"MRVL  ",letter_spacing,&font,color,x_orig);
-  // Item* fourth = new Item(x,y,"MSFT  ",letter_spacing,&font,color,x_orig);
-  // Item* fifth = new Item(x,y,"AAPL ",letter_spacing,&font,color,x_orig);
-
-  Item* price = new Item(x,30,"11.51",letter_spacing,&font,negative_color,x_orig);
-  Item* price2 = new Item(x,30,"585.30",letter_spacing,&font,negative_color,x_orig);
 
   //Using simplified image class right now...could probably be improved in the future
   //with the more advanced class 
-  const char* img = "./images/logos/ford-32-2.ppm";
-  ImageScroller *scroller = new ImageScroller(canvas,1,50);
-  scroller->LoadPPM(img);
 
   const char* img2 = "tesla-final-32.ppm";
   ImageScroller *scroller2 = new ImageScroller(canvas,1,50);
   scroller2->LoadPPM(img2);
-  
   
   const char* arrow_img = "images/utilities/Green-Up-Arrow-32.ppm";
   ImageScroller *arrow_scroller = new ImageScroller(canvas,1,50);
@@ -333,11 +347,6 @@ int main(int argc, char *argv[]) {
   //WRITE IN NOTES:
   //images must be scaled to 32 bit p6 (raw) ppm
 
-  StockManager* mainScroller = new StockManager(canvas,scroller,secondItem,price,arrow_scroller);
-  mainScroller->resetLocations();
-  mainScroller->updateLocations(offscreen_canvas,board_size);
-  //offscreen_canvas = canvas->SwapOnVSync(offscreen_canvas);
-  mainScroller->resetLocations();
 
   StockManager* mainScroller2 = new StockManager(canvas,scroller2,firstItem,price2,arrow_scroller2);
   mainScroller2->resetLocations();
@@ -355,12 +364,11 @@ int main(int argc, char *argv[]) {
   currItems.push_back(mainScroller);
   //currItems.push_back(mainScroller2);
   readyItems.push(mainScroller2);
-
+  */
 
   int length = 0;
   struct timespec next_frame = {0, 0};
-  */
-
+  vector<StockManager*>::iterator it;
 
 
 //Multi stock scroller:
@@ -374,7 +382,7 @@ int main(int argc, char *argv[]) {
   //If we removed a stock from currItems, add the next stock from ready to currItems
   bool addNew;
   //cout << "Board size: " << board_size << endl;
-  /*
+  
   while (!interrupt_received && loops != 0) {
 
     offscreen_canvas->Clear();
@@ -385,7 +393,7 @@ int main(int argc, char *argv[]) {
     addNew = false;
     for(it = currItems.begin(); it!=currItems.end();) {
       int currInd = std::distance(currItems.begin(),it);
-      //cout << "pos end: " << (*it)->getPosEnd() << endl;
+      cout << "pos end: " << (*it)->getPosEnd() << endl;
       bool reset = (*it)->updateLocations(offscreen_canvas,board_size);
       if(currInd == 0 && reset) {
         //Location was reset..remove from curr items
@@ -436,7 +444,7 @@ int main(int argc, char *argv[]) {
     
     if (speed <= 0) pause();  // Nothing to scroll.
   }
-  */
+  
 
 
 

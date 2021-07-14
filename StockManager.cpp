@@ -97,6 +97,7 @@ bool StockManager::updateLocations(rgb_matrix::Canvas *c, int rightBoundry) {
     //cout << arrow->getPostX() - arrow->getImageWidth() << endl;
     ticker->drawItem(c,rightBoundry);
     price->drawItem(c,rightBoundry);
+
     //arrow->Run(c);
 
     //INFO: Images are negative based going right
